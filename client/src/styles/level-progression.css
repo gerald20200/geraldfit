@@ -1,0 +1,9 @@
+.level-progression{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:10px;padding:10px 12px;background:rgba(8,19,17,.45);border:1px solid rgba(16,185,129,.2)}
+.level-progression>div{flex:1}
+.level-progression p{margin:4px 0 7px;color:#AFC0BA;font-size:8px;line-height:1.5}
+.level-progression-track{height:4px;max-width:330px;background:#23352F}
+.level-progression-track span{height:100%;display:block;background:var(--turf);transition:width .2s}
+.level-progression>button{min-height:33px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;background:var(--turf);border:0;color:#06251B;font-size:8px;font-weight:700;cursor:pointer}
+.level-progression>button:disabled{background:#263548;color:#8998A6;cursor:not-allowed}
+@media(max-width:640px){.level-progression{align-items:flex-start;flex-direction:column}.level-progression>button{width:100%;justify-content:center}.level-progression-track{max-width:none}}
+@media(max-width:640px){.academy-exercise-card{display:block}.academy-exercise-art{height:140px;min-height:0}.academy-exercise-art .exercise-diagram{position:static;inset:auto;width:100%;height:100%;max-width:100%;transform:none}.academy-exercise-content h4{min-height:0}.academy-teaches,.academy-age-note{min-height:0}}

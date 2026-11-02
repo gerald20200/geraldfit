@@ -1,0 +1,6 @@
+.confirmation-message{margin-top:30px;padding:22px;border:1px solid rgba(16,185,129,.28);background:rgba(16,185,129,.07)}
+.confirmation-message>svg{color:var(--turf)}
+.confirmation-message h3{margin:14px 0 7px;font:600 25px 'Barlow Condensed',sans-serif}
+.confirmation-message p{margin:0 0 17px;color:var(--muted);font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.confirmation-message strong{color:var(--light)}
+.confirmation-message .text-link{padding:0;border:0;background:none;cursor:pointer}
