@@ -9,7 +9,7 @@ api.interceptors.request.use((config) => {
 
 export function getErrorMessage(error) {
   if (!error.response) {
-    return 'Cannot reach the Geraldfit API. Start the server and configure server/.env with your Supabase project credentials.';
+    return 'Cannot reach the Geraldfit API. Make sure the server is running, VITE_API_URL is correct, and the client origin is allowed by server CORS.';
   }
   return error.response.data?.message || error.message || 'Something went wrong. Please try again.';
 }

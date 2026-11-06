@@ -21,12 +21,11 @@ server/
 	supabase/schema.sql          Base tables, RLS, and starter drills
 	supabase/training_center.sql Additive position-specific exercise library
 	supabase/football_development.sql Additive coaching lessons and player preferences
-	supabase/admin_dashboard.sql Additive admin authorization and archive support
 ```
 
 ## Requirements
 
-- Node.js 20 or newer
+- Node.js 20.19+ or 22.12+
 - A Supabase project
 
 ## Supabase setup
@@ -34,11 +33,9 @@ server/
 1. If this is a new database, run [`server/supabase/schema.sql`](server/supabase/schema.sql) first.
 2. Run [`server/supabase/training_center.sql`](server/supabase/training_center.sql) in the Supabase SQL Editor. It only adds exercise metadata and training records; it does not drop existing tables or progress logs.
 3. Run [`server/supabase/football_development.sql`](server/supabase/football_development.sql) for the full coaching curriculum and saved player preferences. It only adds columns to `profiles` and `workouts`; it does not create, drop, or replace tables, and it leaves `progress_logs` and Auth intact. Review this migration before applying it.
-4. Run [`server/supabase/admin_dashboard.sql`](server/supabase/admin_dashboard.sql). It adds `profiles.is_admin` (default `false`) and `workouts.is_published` (default `true`); it creates no tables and changes no existing account or progress records.
-5. To authorize your own account, uncomment the example `UPDATE public.profiles ...` statement at the bottom of `admin_dashboard.sql`, replace its example email with your Supabase account email, and run only that statement in the SQL Editor. Do not expose or set admin access from client-side code.
-6. Copy the project URL, anon key, and service-role key from the Supabase project settings.
-7. Configure the variables in `server/.env` using `server/.env.example`. Keep the service-role key private and never expose it to the browser.
-8. Configure `client/.env` with `VITE_API_URL` from `client/.env.example`. The browser does not need Supabase credentials because all Supabase access goes through the Express API.
+4. Copy the project URL, anon key, and service-role key from the Supabase project settings.
+5. Configure the variables in `server/.env` using `server/.env.example`. Keep the service-role key private and never expose it to the browser.
+6. Configure `client/.env` with `VITE_API_URL` from `client/.env.example`. The browser does not need Supabase credentials because all Supabase access goes through the Express API.
 
 Supabase Auth handles account registration, password hashing, email confirmation, and JWT issuance. Configure the Supabase email provider and SMTP settings for your deployment. The Express API validates bearer tokens with Supabase Auth and refreshes expired sessions. The database uses row-level security; API service credentials stay on the server.
 
@@ -61,6 +58,11 @@ npm run dev
 In VS Code, the API can instead be started through **Run and Debug → Geraldfit API**. The client dev server must also be running.
 
 Open the Vite URL printed in the client terminal (normally `http://localhost:5173`). The API listens on `http://localhost:5000` by default.
+If Vite selects another port because `5173` is busy, local `localhost` and `127.0.0.1` origins are allowed while the API is not in production mode.
+
+## Deployment
+
+Vercel builds and serves the client only. Deploy the Express server separately, set the Vercel `VITE_API_URL` environment variable to the deployed API URL ending in `/api`, and set the server's `CLIENT_ORIGIN` to the deployed frontend origin. In production, `CLIENT_ORIGIN` is the CORS allowlist; local development origins are not allowed automatically.
 
 ## Signup troubleshooting
 
@@ -75,9 +77,5 @@ If signup shows that the API cannot be reached, make sure `server/.env` exists a
 - `POST /api/workouts/complete` (bearer token required)
 - `GET /api/users/profile` (bearer token required)
 - `PATCH /api/users/training-preferences` (bearer token required)
-- `GET /api/admin/overview` (admin only)
-- `GET /api/admin/players` (admin only)
-- `GET /api/admin/exercises` (admin only)
-- `POST`, `PUT`, and `DELETE /api/admin/exercises` (admin only; delete archives to preserve progress history)
 
 See [`geraldfit_complete_architecture_setup_guide.md`](geraldfit_complete_architecture_setup_guide.md) for the architecture blueprint supplied with this workspace.

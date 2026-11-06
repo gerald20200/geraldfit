@@ -1,0 +1,17 @@
+.exercise-diagram{display:block;width:100%;height:auto;overflow:visible}
+.exercise-diagram .diagram-pitch{fill:#10382E;stroke:rgba(210,240,229,.18);stroke-width:1}
+.exercise-diagram .diagram-field-line{fill:none;stroke:rgba(222,241,234,.2);stroke-width:1}
+.exercise-diagram .diagram-route{fill:none;stroke:#6EE7B7;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.exercise-diagram .diagram-route-defend{stroke:#F5C25D}
+.exercise-diagram .diagram-route-keeper{stroke:#7DD3FC}
+.exercise-diagram .diagram-opponent-route{fill:none;stroke:#FB8A79;stroke-width:2;stroke-dasharray:5 4;stroke-linecap:round;stroke-linejoin:round}
+.exercise-diagram .diagram-recovery{fill:none;stroke:#F5C25D;stroke-width:2;stroke-dasharray:4 4;stroke-linecap:round}
+.exercise-diagram .diagram-wall{fill:none;stroke:#7DD3FC;stroke-width:4;stroke-dasharray:2 3}
+.exercise-diagram .diagram-zone{fill:rgba(248,250,252,.035);stroke:rgba(222,241,234,.42);stroke-width:1.2;stroke-dasharray:5 4}
+.exercise-diagram .diagram-goal{fill:none;stroke:#E7F1EE;stroke-width:1.7}
+.exercise-diagram .diagram-target{fill:rgba(110,231,183,.1);stroke:#6EE7B7;stroke-width:1.5}
+.exercise-diagram .diagram-limb{fill:none;stroke:#F8FAFC;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.exercise-diagram .diagram-marker-label{fill:#071A15;font:800 7px 'DM Sans',sans-serif}
+.exercise-diagram .diagram-label{fill:#E5F0ED;font:700 8px 'DM Sans',sans-serif;letter-spacing:.35px}
+.exercise-diagram .diagram-small-label{fill:#AFC7BF;font:700 6.5px 'DM Sans',sans-serif;letter-spacing:.3px}
+.exercise-diagram .diagram-caption{fill:#86A99F;font:700 6px 'DM Sans',sans-serif;letter-spacing:.6px}

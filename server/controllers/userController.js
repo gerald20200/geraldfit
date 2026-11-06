@@ -1,11 +1,11 @@
 import { getProgressSummary } from '../models/progressModel.js';
-import { findAdminStatus, findProfile, findTrainingPreferences, updateTrainingPreferences } from '../models/userModel.js';
+import { findProfile, findTrainingPreferences, updateTrainingPreferences } from '../models/userModel.js';
 
 const trainingPositions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'CAM', 'LM', 'RM', 'LW', 'RW', 'ST', 'CF'];
 const trainingLevels = ['Beginner', 'Intermediate', 'Advanced'];
 
 function missingTrainingMigration(error) {
-  return error.code === '42703' || error.code === 'PGRST204' || /training_position|training_level|improvement_goals|is_admin/i.test(error.message || '');
+  return error.code === '42703' || error.code === 'PGRST204' || /training_position|training_level|improvement_goals/i.test(error.message || '');
 }
 
 function dateKey(date) {
@@ -19,9 +19,6 @@ export async function getProfile(req, res, next) {
     if (!profile) return res.status(404).json({ message: 'Player profile not found.' });
     let preferences = null;
     try { preferences = await findTrainingPreferences(req.user.id); }
-    catch (error) { if (!missingTrainingMigration(error)) throw error; }
-    let isAdmin = false;
-    try { isAdmin = await findAdminStatus(req.user.id); }
     catch (error) { if (!missingTrainingMigration(error)) throw error; }
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -48,7 +45,6 @@ export async function getProfile(req, res, next) {
       trainingPosition: preferences?.training_position || ({ Winger: 'LW', Striker: 'ST', Defender: 'CB', Midfielder: 'CM' }[profile.preferred_position] || 'CM'),
       trainingLevel: preferences?.training_level || profile.fitness_level || 'Beginner',
       improvementGoals: preferences?.improvement_goals || [],
-      isAdmin,
       createdAt: profile.created_at, totalCompletions,
       weeklyCompletions, streakDays, weeklyActivity, recentProgress: recentLogs,
       workoutProgress,

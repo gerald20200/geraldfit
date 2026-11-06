@@ -34,10 +34,7 @@ export function AuthProvider({ children }) {
 
   async function authenticate(endpoint, payload) {
     const { data } = await api.post(`/auth/${endpoint}`, payload);
-    if (data.token) {
-      saveSession(data);
-      try { return await refreshUser(); } catch { return data.user; }
-    }
+    if (data.token) saveSession(data);
     return data.user;
   }
 

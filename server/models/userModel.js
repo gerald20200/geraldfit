@@ -30,9 +30,3 @@ export async function updateTrainingPreferences(userId, preferences) {
   if (error) throw error;
   return data;
 }
-
-export async function findAdminStatus(userId) {
-  const { data, error } = await supabaseAdmin.from('profiles').select('is_admin').eq('id', userId).maybeSingle();
-  if (error) throw error;
-  return Boolean(data?.is_admin);
-}

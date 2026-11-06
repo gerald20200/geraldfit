@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import api, { getErrorMessage } from '../lib/api.js';
 import DevelopmentCentre from './DevelopmentCentre.jsx';
 import ExerciseDiagram from './ExerciseDiagram.jsx';
+import PositionDrillLab from './PositionDrillLab.jsx';
 import '../styles/training-center.css';
 import '../styles/football-centre.css';
 import '../styles/football-academy.css';
@@ -60,12 +61,12 @@ function ExerciseCard({ exercise, ageBand, completedCount, completedToday, savin
   </article>;
 }
 
-export default function FootballDevelopmentCentre({ preferredPosition = 'Midfielder', trainingPosition, trainingLevel = 'Beginner', improvementGoals = [], workoutProgress = {}, recentProgress = [], onProgressSaved }) {
+export default function FootballDevelopmentCentre({ preferredPosition = 'Midfielder', trainingPosition, trainingLevel = 'Beginner', improvementGoals = [], workoutProgress = {}, recentProgress = [], streakDays = 0, onProgressSaved }) {
   const [exercises, setExercises] = useState([]);
   const [selectedPosition, setSelectedPosition] = useState(trainingPosition || fallbackPosition[preferredPosition] || 'CM');
   const [currentLevel, setCurrentLevel] = useState(trainingLevel || 'Beginner');
   const [selectedLevel, setSelectedLevel] = useState(trainingLevel || 'Beginner');
-  const [ageBandId, setAgeBandId] = useState(() => localStorage.getItem('geraldfit_age_band') || '17-plus');
+  const [ageBandId, setAgeBandId] = useState(() => localStorage.getItem('geraldfit_age_band') || 'under-13');
   const [goals, setGoals] = useState(improvementGoals || []);
   const [goalInput, setGoalInput] = useState('');
   const [activeView, setActiveView] = useState('programme');
@@ -176,15 +177,18 @@ export default function FootballDevelopmentCentre({ preferredPosition = 'Midfiel
     savePreferences({ improvementGoals: nextGoals });
   }
 
-  async function logExercise(exercise) {
+  async function logExercise(exercise, note) {
     setSavingId(exercise.id);
     setError('');
     try {
-      await api.post('/workouts/complete', { workoutId: exercise.id, intensityRating: 3, notes: `Completed ${exercise.title}: ${exercise.recommended_repetitions}` });
+      await api.post('/workouts/complete', { workoutId: exercise.id, intensityRating: 3, notes: note || `Completed ${exercise.title}: ${exercise.recommended_repetitions}` });
       setCompletedToday((current) => new Set(current).add(exercise.id));
-      await onProgressSaved?.();
+      try { await onProgressSaved?.(); }
+      catch (requestError) { setError(getErrorMessage(requestError)); }
+      return true;
     } catch (requestError) {
       setError(getErrorMessage(requestError));
+      return false;
     } finally {
       setSavingId('');
     }
@@ -207,6 +211,7 @@ export default function FootballDevelopmentCentre({ preferredPosition = 'Midfiel
       <div className="level-progression"><div><span className="academy-section-eyebrow">LEVEL-UP PATH / CURRENT: {currentLevel.toUpperCase()}</span><p>{nextLevel ? `Log ${requiredLevelCompletions} different ${currentLevel.toLowerCase()} exercises to unlock ${nextLevel.toLowerCase()}.` : 'Advanced programme reached. Keep refining technique and consistency.'}</p><div className="level-progression-track"><span style={{ width: `${nextLevel ? Math.min(100, completedCurrentLevel / Math.max(1, requiredLevelCompletions) * 100) : 100}%` }} /></div></div><button onClick={advanceLevel} disabled={!nextLevel || completedCurrentLevel < requiredLevelCompletions || savingPreferences}>{savingPreferences ? <LoaderCircle size={14} className="spinning" /> : <ArrowRight size={14} />}{nextLevel ? `Advance to ${nextLevel}` : 'Top level reached'}</button></div>
       <div className="academy-exercise-toolbar"><div><span className="academy-section-eyebrow">ROLE-SPECIFIC PRACTICE</span><h3>{position.name} training <span>·</span> {filteredExercises.length} exercises</h3></div><div className="academy-filters"><label><span>LEVEL</span><select value={selectedLevel} onChange={(event) => chooseLevel(event.target.value)}><option>All levels</option>{levels.map((level) => <option key={level}>{level}</option>)}</select></label><div className="academy-level-progress">{levels.map((level, index) => <span key={level} className={levelOrder[selectedLevel === 'All levels' ? trainingLevel : selectedLevel] >= index ? 'academy-level-lit' : ''} title={level} />)}</div></div></div>
       <p className="age-guidance"><Sparkles size={14} /> <span><strong>{ageBand.label} training guidance:</strong> {ageBand.scale}</span></p>
+      <PositionDrillLab positionCode={selectedPosition} ageBand={ageBand} streakDays={streakDays} trackingExercise={positionExercises[0]} loading={loading} saving={savingId === positionExercises[0]?.id} onComplete={logExercise} />
       {loading ? <div className="training-loading"><LoaderCircle size={20} className="spinning" /> Loading your programme…</div> : filteredExercises.length ? <div className="academy-exercise-grid">{filteredExercises.map((exercise) => <ExerciseCard key={exercise.id} exercise={exercise} ageBand={ageBand} completedCount={workoutProgress[exercise.id] || 0} completedToday={completedToday.has(exercise.id)} saving={savingId === exercise.id} onComplete={logExercise} />)}</div> : <div className="training-empty"><Target size={23} /><div><strong>No exercises in this filter yet.</strong><span>Choose another level or apply the football development migration in Supabase.</span></div></div>}
       <div className="academy-programme-footer"><span><CircleCheck size={14} />Progress saves to your account</span><span>Increase volume only when technique remains consistent.</span></div>
     </>}
